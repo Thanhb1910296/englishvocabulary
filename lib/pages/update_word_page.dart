@@ -1,16 +1,22 @@
+import 'package:english_vocabulary/model/word.dart';
+import 'package:english_vocabulary/pages/detail_page.dart';
 import 'package:english_vocabulary/service/service.dart';
 import 'package:flutter/material.dart';
+import 'package:translator/translator.dart';
 
 class UpdateWordPage extends StatefulWidget {
+  final String? id;
   final String? name;
   final String? description;
   final String? translate;
-  final String? favorite;
+  //final String? favorite;
   const UpdateWordPage({Key? key, 
-    required this.name, 
+    required this.id,
+    this.name, 
     this.description, 
     this.translate, 
-    this.favorite})
+    //this.favorite
+    })
   : super(key: key);
 
   @override
@@ -18,16 +24,53 @@ class UpdateWordPage extends StatefulWidget {
 }
 
 class _UpdateWordPageState extends State<UpdateWordPage> {
-  final TextEditingController wordController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController translateController = TextEditingController();
-  final TextEditingController favoriteController = TextEditingController();
+
   final Services services = Services();
 
-  final _updateWordFormKey = GlobalKey<FormState>();
+  //final _updateWordFormKey = GlobalKey<FormState>();
+
+  void updateSelectedWord() {
+    services.updateWord(
+      context: context,
+      id: widget.id.toString(),
+      name: nameController.text,
+      description: descriptionController.text,
+      translate: translateController.text,
+      onSuccess: () {
+        setState(() {
+          
+        });
+      },
+    );
+  }
+  
+  void translateToVi() async {
+    final translator = GoogleTranslator();
+    //var trans = translator.translate(value, from: 'en', to: 'vi').then(print);
+    // translator.translate(value, from: 'en', to: 'vi').then((s) {
+    //   print(s);
+    // });
+    String val = nameController.text.toString();
+    var translation = await translator.translate(val, from: 'en', to: 'vi');
+    translateController.text = translation.text;
+  }
   
   @override
+  void initState() {
+    nameController.text = widget.name.toString();
+    descriptionController.text = widget.description.toString();
+    translateController.text = widget.translate.toString();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    var groupValue;
+    String valueSelected;
+    var value;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
@@ -53,7 +96,10 @@ class _UpdateWordPageState extends State<UpdateWordPage> {
           children: [          
             const SizedBox(height: 20),
             TextFormField(
-              controller: wordController,
+              onChanged: (val){
+                translateToVi();
+              },
+              controller: nameController,
               decoration: InputDecoration(
                 hintText: widget.name,
                 border: const OutlineInputBorder(
@@ -70,6 +116,7 @@ class _UpdateWordPageState extends State<UpdateWordPage> {
             ),
             const SizedBox(height: 10),
             TextFormField(
+
               controller: descriptionController,
               decoration: InputDecoration(
                 hintText: widget.description,
@@ -78,6 +125,7 @@ class _UpdateWordPageState extends State<UpdateWordPage> {
                     color: Colors.black,
                   ),
                 ),
+                
                 enabledBorder: const OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Colors.black,
@@ -103,22 +151,24 @@ class _UpdateWordPageState extends State<UpdateWordPage> {
               ),
             ),
             const SizedBox(height: 10),
-            TextFormField(
-              controller: favoriteController,
-              decoration: InputDecoration(
-                hintText: widget.favorite,
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.black,
-                  ),
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.black,
-                  )
-                ),
-              ),
-            ),
+            
+        
+            // TextFormField(
+            //   controller: favoriteController,
+            //   decoration: InputDecoration(
+            //     hintText: widget.id,
+            //     border: const OutlineInputBorder(
+            //       borderSide: BorderSide(
+            //         color: Colors.black,
+            //       ),
+            //     ),
+            //     enabledBorder: const OutlineInputBorder(
+            //       borderSide: BorderSide(
+            //         color: Colors.black,
+            //       )
+            //     ),
+            //   ),
+            // ),
             const SizedBox(height: 50),
             ElevatedButton(
               child: Text('Save',
@@ -128,7 +178,14 @@ class _UpdateWordPageState extends State<UpdateWordPage> {
                 ),
               ),
               onPressed: (){
-
+                updateSelectedWord();
+                // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>DetailPage(
+                //   id: widget.id,
+                //   name: nameController.text,
+                //   description: descriptionController.text,
+                //   translate: translateController.text,
+                //   //favorite: wordData.favorite               
+                // )));
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),

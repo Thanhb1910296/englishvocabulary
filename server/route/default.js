@@ -51,7 +51,7 @@ defaultRouter.post("/api/update-word", async (req, res) => {
     word_x.name = name;
     word_x.description = description;
     word_x.translate = translate;
-    word_x.favorite = favorite; 
+    // word_x.favorite = favorite; 
 
     word_x = await word_x.save();
 

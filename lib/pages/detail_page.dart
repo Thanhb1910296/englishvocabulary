@@ -4,15 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 class DetailPage extends StatefulWidget {
- final String? name;
+  final String? id;
+  final String? name;
   final String? description;
   final String? translate;
-  final String? favorite;
+  //final String? favorite;
   const DetailPage({Key? key, 
-    required this.name, 
+    required this.id,
+    this.name, 
     this.description, 
     this.translate, 
-    this.favorite})
+    //this.favorite
+    })
   : super(key: key);
 
   @override
@@ -20,10 +23,6 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-  final TextEditingController wordController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController translateController = TextEditingController();
-  final TextEditingController favoriteController = TextEditingController();
   final Services services = Services();
 
   final _updateWordFormKey = GlobalKey<FormState>();
@@ -52,7 +51,7 @@ class _DetailPageState extends State<DetailPage> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 20),
+        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 18),
         child: Column(
           children: [
             const SizedBox(height: 20),
@@ -108,7 +107,7 @@ class _DetailPageState extends State<DetailPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             ElevatedButton(
               child: Text('Update',
                 style: TextStyle(
@@ -118,10 +117,11 @@ class _DetailPageState extends State<DetailPage> {
               ),
               onPressed: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateWordPage(
+                  id: widget.id,
                   name: widget.name,
                   description: widget.description,
                   translate: widget.translate,
-                  favorite: widget.favorite
+                  //favorite: widget.favorite
                 )));
               },
               style: ElevatedButton.styleFrom(

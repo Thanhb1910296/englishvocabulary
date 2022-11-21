@@ -2,13 +2,11 @@ import 'package:english_vocabulary/constants/global_variables.dart';
 import 'package:english_vocabulary/model/word.dart';
 import 'package:english_vocabulary/pages/add_word_page.dart';
 import 'package:english_vocabulary/pages/detail_page.dart';
-import 'package:english_vocabulary/pages/update_word_page.dart';
 import 'package:english_vocabulary/service/service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-import 'package:translator/translator.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,21 +22,11 @@ class _HomePageState extends State<HomePage> {
   final Services services = Services();
 
   FlutterTts flutterTts = FlutterTts();
-  
-  void main() async {
-    //print(y);
-    final translator = GoogleTranslator();
-    //translator.translate(y, from: 'en', to: 'vi').then(print);
-    translator.translate("I love Brazil!", from: 'en', to: 'vi').then((s) {
-      print(s);
-    });
-  }
 
   String y = 'good';
 
   @override
   void initState() {
-    // main();
     super.initState();
     fetchAllWords();
     fetchAllWordsFav();
@@ -61,6 +49,19 @@ class _HomePageState extends State<HomePage> {
       onSuccess: () {
         words!.removeAt(index);
         setState(() {});
+      },
+    );
+  }
+
+  void updateFavorite(String id, String favorite) {
+    services.updateFavorite(
+      context: context,
+      id: id,
+      favorite: favorite,
+      onSuccess: () {
+        setState(() {
+          
+        });
       },
     );
   }
@@ -222,10 +223,11 @@ class _HomePageState extends State<HomePage> {
                                       onPressed: (){
                                         // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>DetailPage()));
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(
+                                        id: wordData.id,
                                         name: wordData.name,
                                         description: wordData.description,
                                         translate: wordData.translate,
-                                        favorite: wordData.favorite
+                                        //favorite: wordData.favorite
                                       )));
                                       },
                                       icon: Icon(
@@ -235,7 +237,7 @@ class _HomePageState extends State<HomePage> {
                                     if(wordData.favorite == "yes")
                                     IconButton(
                                       onPressed: (){
-
+                                        updateFavorite(wordData.id.toString(), "no");
                                       },
                                       icon: Icon(
                                          Icons.favorite, size: 14, color:Colors.red, 
@@ -244,7 +246,7 @@ class _HomePageState extends State<HomePage> {
                                     if(wordData.favorite == "no" || wordData.favorite == null)
                                     IconButton(
                                       onPressed: (){
-
+                                        updateFavorite(wordData.id.toString(), "yes");
                                       },
                                       icon: Icon(
                                          Icons.favorite_border, size: 14, color:Colors.white, 
@@ -332,7 +334,7 @@ class _HomePageState extends State<HomePage> {
                                     if(wordFavData.favorite == "no" || wordFavData.favorite == null)
                                     IconButton(
                                       onPressed: (){
-
+                                        
                                       },
                                       icon: Icon(
                                          Icons.favorite_border, size: 14, color:Colors.white, 

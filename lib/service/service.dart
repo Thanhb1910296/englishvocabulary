@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:english_vocabulary/model/word.dart';
+import 'package:english_vocabulary/pages/detail_page.dart';
 import 'package:english_vocabulary/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -166,39 +167,82 @@ class Services {
       showSnackBar(context, e.toString());
     }
   }
+
+  void updateWord({
+    required BuildContext context,
+    required String id,
+    required String name,
+    required String description,
+    required String translate,
+    required VoidCallback onSuccess,
+  }) async {
+    try {
+      http.Response res = await http.post(
+        Uri.parse('$uri/api/update-word'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'id': id,
+          'name': name,
+          'description': description,
+          'translate': translate,
+          //'favorite': word.favorite,
+        }),
+      );
+
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          onSuccess();
+          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>DetailPage(
+            id: id,
+            name: name,
+            description: description,
+            translate: translate,
+            //favorite: wordData.favorite               
+          )));
+          showSnackBar(context, 'Updated Successful !');
+          
+        },
+      );
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+  }
+
+  void updateFavorite({
+    required BuildContext context,
+    required String id,
+    required String favorite,
+    required VoidCallback onSuccess,
+  }) async {
+    try {
+      http.Response res = await http.post(
+        Uri.parse('$uri/api/update-favorite'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'id': id,
+          'favorite': favorite,
+        }),
+      );
+
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          onSuccess();
+          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomePage(
+          )));
+          showSnackBar(context, 'Updated Successful !');
+          
+        },
+      );
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+  }
 }
-  
-
-
-
-  // void deleteProduct({
-  //   required BuildContext context,
-  //   required Product product,
-  //   required VoidCallback onSuccess,
-  // }) async {
-  //   final userProvider = Provider.of<UserProvider>(context, listen: false);
-
-  //   try {
-  //     http.Response res = await http.post(
-  //       Uri.parse('$uri/admin/delete-product'),
-  //       headers: {
-  //         'Content-Type': 'application/json; charset=UTF-8',
-  //         'x-auth-token': userProvider.user.token,
-  //       },
-  //       body: jsonEncode({
-  //         'id': product.id,
-  //       }),
-  //     );
-
-  //     httpErrorHandle(
-  //       response: res,
-  //       context: context,
-  //       onSuccess: () {
-  //         onSuccess();
-  //         showSnackBar(context, 'Deleted Successful !');
-  //       },
-  //     );
-  //   } catch (e) {
-  //     showSnackBar(context, e.toString());
-  //   }
-  // }
